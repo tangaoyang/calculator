@@ -10,31 +10,20 @@
 
 @implementation CalculatorModel
 
-char opset[10] = {'+', '-', '*', '/', '(', ')', '#'};
-
-//用来进行比较运算符优先级的矩阵,3代表'=',2代表'>',1代表'<',0代表不可比
-int  cmp[7][7] = {
-    { 2, 2, 2, 2, 2, 1, 1 },
-    { 2, 2, 2, 2, 2, 1, 1 },
-    { 1, 1, 2, 2, 2, 1, 1 },
-    { 1, 1, 2, 2, 2, 1, 1 },
-    { 2, 2, 2, 2, 3, 1, 0 },
-    { 1, 1, 1, 1, 0, 1, 1 },
-    { 2, 2, 2, 2, 2, 0, 3 }  };
-
+char *opset = "+-*/()#";
 
 void InitStack(struct Sqstack *s) {
     s->top = -1;
 }
 
-void NumPush(struct Sqstack *s, char ch) {
+void NumPush(struct Sqstack *s, float num) {
     
     if(s->top == 99) {//栈满
         return ;
     }
     s->top++;
-    s -> data[s -> top] = ch;
-    NSLog(@"push numdata == %d", s -> data[s -> top]);
+    s -> data[s -> top] = num;
+    NSLog(@"push numdata == %f", s -> data[s -> top]);
     
     return ;
     
@@ -64,13 +53,37 @@ char GetTop(struct Sqstack *s) {
     
 }
 
-int Pop(struct Sqstack *s, char x) {
+float NumGetTop(struct Sqstack *s) {
+    
+    if(s->top == -1) {
+        return 0;
+    }
+    float ch;
+    ch = (float)s->data[s->top];
+    return ch;
+    
+}
+
+char Pop(struct Sqstack *s, char x) {
     
     if(s->top == -1)
         return 0;
     x = (char)s->data[s->top];
+    NSLog(@"pop --- %c", x);
     --(s->top);
-    return 1;
+    return x;
+    
+}
+
+float NumPop(struct Sqstack *s) {
+    
+    float x;
+    if(s->top == -1)
+        return 0;
+    x = (float)s->data[s->top];
+    NSLog(@"pop --- %f", x);
+    --(s->top);
+    return x;
     
 }
 
@@ -86,6 +99,18 @@ int In(char ch, char operArr[10]) {
 }
 
 char Compare(char oper1, char oper2) {
+    char *opset = "+-*/()#";
+    
+    //用来进行比较运算符优先级的矩阵,3代表'=',2代表'>',1代表'<',0代表不可比
+    int  cmp[7][7] = {
+        { 2, 2, 2, 2, 2, 1, 1 },
+        { 2, 2, 2, 2, 2, 1, 1 },
+        { 1, 1, 2, 2, 2, 1, 1 },
+        { 1, 1, 2, 2, 2, 1, 1 },
+        { 2, 2, 2, 2, 3, 1, 0 },
+        { 1, 1, 1, 1, 0, 1, 1 },
+        { 2, 2, 2, 2, 2, 0, 3 }  };
+
     int m = 0, n = 0, i, ans;
     for(i = 0; i < 7; i++) {
         if(oper1 == opset[i]) {
@@ -110,21 +135,23 @@ char Compare(char oper1, char oper2) {
     return 'E';
 }
 
-int Count(int x1, char op, int x2) {
-    int val = 0;
+float Count(float x1, char op, float x2) {
+    float val = 0;
     switch(op) {
         case '+': val = x1 + x2; break;
         case '-': val = x1 - x2; break;
         case '*': val = x1 * x2; break;
         case '/': val = x1 / x2; break;
     }
+    NSLog(@"val ===  %f", val);
     return val;
 }
 
 - (void)Cal{
     
-    char ch, x = '\0', op = '\0', a1 = '\0', a2 = '\0', val;
-    int data, i = 0;
+    char ch, x = '\0', op = '\0';
+    int i = 0;
+    float data, a1, a2, val;
     struct Sqstack *Num = (struct Sqstack*) malloc(sizeof(struct Sqstack)); //初始化操作数栈
     InitStack(Num);
     struct Sqstack *Oper = (struct Sqstack*) malloc(sizeof(struct Sqstack)); //初始化运算符栈
@@ -139,8 +166,25 @@ int Count(int x1, char op, int x2) {
             i++;
             ch = [_getCal characterAtIndex:i];
             NSLog(@"ch == %c", ch);
+            int flag = 0;
             while(!In(ch, opset)){//读入的不是运算符，是操作数
-                data = data * 10 + ch - '0';//读入操作数的各位数码，并转化为十进制数data
+                if (ch == '.') {
+                    flag = 1;
+                    i++;
+                    ch = [_getCal characterAtIndex:i];
+                    NSLog(@"ch == %c", ch);
+                    continue;
+                }
+                if (flag) {
+                    float j;
+                    j = (ch - '0') * pow(10, -1);
+                    NSLog(@"%f", j);
+                    data = data + j;
+                    NSLog(@"point data == %f", data);
+                    flag++;
+                } else {
+                    data = data * 10 + ch - '0';//读入操作数的各位数码，并转化为十进制数data
+                }
                 i++;
                 ch = [_getCal characterAtIndex:i];
                 NSLog(@"ch == %c", ch);
@@ -148,12 +192,12 @@ int Count(int x1, char op, int x2) {
             NumPush(Num, data);//操作数入栈
         } else {
             if(ch == ')') {
-                Pop(Oper, op);
-                Pop(Num, a2);
-                Pop(Num, a1);
+                op = Pop(Oper, op);
+                a2 = NumPop(Num);
+                a1 = NumPop(Num);
                 val = Count(a1, op, a2);
                 NumPush(Num, val);
-                Pop(Oper, op);//让左括号出栈
+                op = Pop(Oper, op);//让左括号出栈
                 i++;
                 ch = [_getCal characterAtIndex:i];
                 NSLog(@"ch == %c", ch);
@@ -167,22 +211,23 @@ int Count(int x1, char op, int x2) {
                     NSLog(@"ch == %c", ch);
                     break;
                 case '=':
-                    Pop(Oper, x);
+                    x = Pop(Oper, x);
                     i++;
                     ch = [_getCal characterAtIndex:i];
                     NSLog(@"ch == %c", ch);
                     break;
                 case '<':
-                    Pop(Oper, op);
-                    Pop(Num, a2);
-                    Pop(Num, a1);
+                    op = Pop(Oper, op);
+                    a2 = NumPop(Num);
+                    a1 = NumPop(Num);
                     val = Count(a1, op, a2);
                     NumPush(Num, val);
                     break;
             }
         }
     }
-    _answer = [NSNumber numberWithChar:GetTop(Num)];
+    NSLog(@"NumGetTop(Num) ==  %f", NumGetTop(Num));
+    _answer = [NSNumber numberWithFloat:NumGetTop(Num)];
     
 }
 

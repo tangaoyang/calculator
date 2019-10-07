@@ -33,6 +33,11 @@
 
 - (void)press:(DeepButton *) button {
     
+    if (_myModel.answer) {
+        _myView.showTextField.text = @"";
+        [_getStr setString:@""];
+        _myModel.answer = NULL;
+    }
     if (button.tag == 101) {
         NSLog(@"AC");
         _myView.showTextField.text = @"";
@@ -46,12 +51,15 @@
     } else if (button.tag >= 1 && button.tag <= 10) {
         NSLog(@"number");
         [_getStr appendString:[NSString stringWithFormat:@"%ld", (long)button.tag]];
+    } else if (button.tag == 11) {
+        NSLog(@".");
+        [_getStr appendString:@"."];
     } else if (button.tag == 201) {
         NSLog(@"÷");
-        [_getStr appendString:@"÷"];
+        [_getStr appendString:@"/"];
     } else if (button.tag == 202) {
         NSLog(@"x");
-        [_getStr appendString:@"×"];
+        [_getStr appendString:@"*"];
     } else if (button.tag == 203) {
         NSLog(@"-");
         [_getStr appendString:@"-"];
@@ -59,15 +67,29 @@
         NSLog(@"+");
         [_getStr appendString:@"+"];
     } else {
+        NSString *lastString = [_getStr substringFromIndex:_getStr.length-1];
+        if (lastString) {
+            int i;
+            NSLog(@"lastStr = %@", lastString);
+            for(i = 0; i < 10; i++) {
+                if(lastString == [NSString stringWithFormat:@"%d", i] || [lastString  isEqual: @"("] || [lastString  isEqual: @")"]) {
+                    break;
+                }
+            }
+            if (i == 10) {
+                _myView.showTextField.text = @"格式错误！";
+                [_getStr setString:@""];
+                return ;
+            }
+        }
         [_getStr appendString:@"#"];
         _myModel.getCal = _getStr;
         [_myModel Cal];
         _myView.showTextField.text = [NSString stringWithFormat:@"%@", _myModel.answer];
         NSLog(@"answer == %@", _myModel.answer);
+        return ;
     }
-    
     _myView.showTextField.text = _getStr;
-    
 }
 
 @end

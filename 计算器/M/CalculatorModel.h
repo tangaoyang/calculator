@@ -11,7 +11,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 struct Sqstack {
-    int data[100];
+    float data[100];
     int top;
 };
 
@@ -20,7 +20,7 @@ struct Sqstack {
 @property (nonatomic, strong) NSString *getCal;
 @property NSNumber *answer;
 
-- (int)Cal;
+- (void)Cal;
 
 @end
 
