@@ -129,7 +129,7 @@
         _zeroButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
         [self addSubview:_zeroButton];
         [_zeroButton setTitle:@"0" forState:UIControlStateNormal];
-        _zeroButton.tag = 10;
+        _zeroButton.tag = 0;
         _zeroButton.titleLabel.font = [UIFont systemFontOfSize:40];
         _zeroButton.layer.masksToBounds = YES;
         _zeroButton.layer.cornerRadius = 45;
@@ -164,7 +164,7 @@
         if (button.tag >= 101 && button.tag <= 103) {
             button.backgroundColor = [UIColor colorWithRed:0.62 green:0.62 blue:0.62 alpha:1];
             [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        } else if (button.tag >= 1 && button.tag <= 11) {
+        } else if (button.tag >= 0 && button.tag <= 11) {
             button.backgroundColor = [UIColor colorWithRed:0.17 green:0.17 blue:0.17 alpha:1];
             [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         } else {

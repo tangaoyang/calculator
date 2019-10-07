@@ -102,14 +102,22 @@ char Compare(char oper1, char oper2) {
     char *opset = "+-*/()#";
     
     //用来进行比较运算符优先级的矩阵,3代表'=',2代表'>',1代表'<',0代表不可比
-    int  cmp[7][7] = {
-        { 2, 2, 2, 2, 2, 1, 1 },
-        { 2, 2, 2, 2, 2, 1, 1 },
-        { 1, 1, 2, 2, 2, 1, 1 },
-        { 1, 1, 2, 2, 2, 1, 1 },
-        { 2, 2, 2, 2, 3, 1, 0 },
-        { 1, 1, 1, 1, 0, 1, 1 },
-        { 2, 2, 2, 2, 2, 0, 3 }  };
+//    int  cmp[7][7] = {
+//        { 2, 2, 2, 2, 2, 1, 1 },
+//        { 2, 2, 2, 2, 2, 1, 1 },
+//        { 1, 1, 2, 2, 2, 1, 1 },
+//        { 1, 1, 2, 2, 2, 1, 1 },
+//        { 2, 2, 2, 2, 3, 1, 0 },
+//        { 1, 1, 1, 1, 0, 1, 1 },
+//        { 2, 2, 2, 2, 2, 0, 3 }  };
+    int cmp[7][7]  = {
+        { 2, 2, 1, 1, 1, 2, 2 },
+        { 2, 2, 1, 1, 1, 2, 2 },
+        { 2, 2, 2, 2, 1, 2, 2 },
+        { 2, 2, 2, 2, 1, 1, 2 },
+        { 1, 1, 1, 1, 1, 3, 0 },
+        { 2, 2, 2, 2, 0, 2, 2 },
+        { 1, 1, 1, 1, 1, 0, 3 }  };
 
     int m = 0, n = 0, i, ans;
     for(i = 0; i < 7; i++) {
@@ -122,9 +130,9 @@ char Compare(char oper1, char oper2) {
     }
     ans = cmp[m][n];
     switch (ans) {
-        case 1:
-            return (char)('<');
         case 2:
+            return (char)('<');
+        case 1:
             return (char)('>');
         case 3:
             return (char)('=');
@@ -191,18 +199,6 @@ float Count(float x1, char op, float x2) {
             }
             NumPush(Num, data);//操作数入栈
         } else {
-            if(ch == ')') {
-                op = Pop(Oper, op);
-                a2 = NumPop(Num);
-                a1 = NumPop(Num);
-                val = Count(a1, op, a2);
-                NumPush(Num, val);
-                op = Pop(Oper, op);//让左括号出栈
-                i++;
-                ch = [_getCal characterAtIndex:i];
-                NSLog(@"ch == %c", ch);
-                continue;
-            }
             switch(Compare(GetTop(Oper), ch)) {
                 case '>':
                     OperPush(Oper, ch);
