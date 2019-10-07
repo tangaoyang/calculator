@@ -21,19 +21,20 @@
         
         NSLog(@"---view");
         
-        _showTextField = [[UITextField alloc] init];
-        [self addSubview:_showTextField];
-        [_showTextField mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(@20);
+        _showTextView = [[UITextView alloc] init];
+        _showTextView.backgroundColor = [UIColor blackColor];
+        [self addSubview:_showTextView];
+        _showTextView.editable = NO;
+        [_showTextView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(@30);
             make.left.equalTo(@10);
             make.width.equalTo(@(W - 30));
             make.height.equalTo(@(H / 3));
         }];
-        _showTextField.textColor = [UIColor whiteColor];
-        _showTextField.font = [UIFont systemFontOfSize:30];
-        _showTextField.tintColor = [UIColor clearColor];
-        _showTextField.enabled = NO;
-        _showTextField.textAlignment = NSTextAlignmentRight;
+        _showTextView.textColor = [UIColor whiteColor];
+        _showTextView.font = [UIFont systemFontOfSize:45];
+        _showTextView.tintColor = [UIColor clearColor];
+        _showTextView.textAlignment = NSTextAlignmentRight;
         
         
         _ACButton = [[DeepButton alloc] init];

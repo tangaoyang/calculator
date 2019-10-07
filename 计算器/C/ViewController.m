@@ -29,46 +29,79 @@
         [button addTarget:self action:@selector(press:) forControlEvents:UIControlEventTouchUpInside];
     }
     
+    _pointFlag = 0;
+    
 }
 
 - (void)press:(DeepButton *) button {
     
     if (_myModel.answer) {
-        _myView.showTextField.text = @"";
+        _myView.showTextView.text = @"";
         [_getStr setString:@""];
         _myModel.answer = NULL;
     }
     if (button.tag == 101) {
         NSLog(@"AC");
-        _myView.showTextField.text = @"";
+        _pointFlag = 0;
+        _myView.showTextView.text = @"";
         [_getStr setString:@""];
     } else if (button.tag == 102) {
         NSLog(@"(");
+        _pointFlag = 0;
+        char *num = "1234567890";
+        NSString *lastStr = [_getStr substringFromIndex:_getStr.length - 1];
+        for (int h = 0; h < 10; h++) {
+            if ([lastStr isEqualToString:[NSString stringWithFormat:@"%c", num[h]]]) {
+                _myView.showTextView.text = @"格式错误！";
+                return ;
+            }
+        }
         [_getStr appendString:@"("];
     } else if (button.tag == 103) {
         NSLog(@")");
+        _pointFlag = 0;
         [_getStr appendString:@")"];
     } else if (button.tag >= 0 && button.tag <= 9) {
         NSLog(@"number");
-        [_getStr appendString:[NSString stringWithFormat:@"%ld", (long)button.tag]];
+        if (button.tag == 0 && _getStr.length >= 1 && _pointFlag == 0) {
+            NSString *lastStr = [_getStr substringFromIndex:_getStr.length - 1];
+            if (![button.titleLabel.text isEqualToString:lastStr]) {
+                NSLog(@"0");
+                 [_getStr appendString:[NSString stringWithFormat:@"%ld", (long)button.tag]];
+            }
+        } else {
+            [_getStr appendString:[NSString stringWithFormat:@"%ld", (long)button.tag]];
+        }
     } else if (button.tag == 11) {
-        NSLog(@".");
-        [_getStr appendString:@"."];
+        if (_pointFlag == 0) {
+            NSLog(@".");
+            NSString *firstString = [_getStr substringFromIndex:0];
+            NSLog(@"firstString  ==  %@", firstString);
+            if ([firstString  isEqual: @""]) {
+                [_getStr appendFormat:@"0"];
+            }
+            _pointFlag = 1;
+            [_getStr appendString:@"."];
+        }
     } else if (button.tag == 201) {
         NSLog(@"÷");
+        _pointFlag = 0;
         [_getStr appendString:@"/"];
     } else if (button.tag == 202) {
         NSLog(@"x");
+        _pointFlag = 0;
         [_getStr appendString:@"*"];
     } else if (button.tag == 203) {
         NSLog(@"-");
+        _pointFlag = 0;
         [_getStr appendString:@"-"];
     } else if (button.tag == 204) {
         NSLog(@"+");
+        _pointFlag = 0;
         [_getStr appendString:@"+"];
     } else {
         if ([_getStr isEqualToString: @""]) {
-            _myView.showTextField.text = @"格式错误！";
+            _myView.showTextView.text = @"格式错误！";
             return ;
         }
         int m = -1;
@@ -92,10 +125,10 @@
                 m--;
             }
             if (m < -1) {
-                _myView.showTextField.text = @"格式错误！";
+                _myView.showTextView.text = @"格式错误！";
                 return ;
             }
-            for (int j = 0; j < 7; j++) {
+            for (int j = 0; j < 4; j++) {
                 if (opset[j] == shortStr) {
                     flag1 = 1;
                 }
@@ -105,12 +138,12 @@
             }
             //连着两个都是运算符
             if (flag2 == 1 && flag1 == 1) {
-                _myView.showTextField.text = @"格式错误！";
+                _myView.showTextView.text = @"格式错误！";
                 return ;
             }
         }
         if (m != -1) {
-            _myView.showTextField.text = @"格式错误！";
+            _myView.showTextView.text = @"格式错误！";
             return ;
         }
         NSString *lastString = [_getStr substringFromIndex:_getStr.length-1];
@@ -123,19 +156,20 @@
                 }
             }
             if (i == 10) {
-                _myView.showTextField.text = @"格式错误！";
+                _myView.showTextView.text = @"格式错误！";
                 [_getStr setString:@""];
                 return ;
             }
         }
+        _pointFlag = 0;
         [_getStr appendString:@"#"];
         _myModel.getCal = _getStr;
         [_myModel Cal];
-        _myView.showTextField.text = [NSString stringWithFormat:@"%@", _myModel.answer];
+        _myView.showTextView.text = [NSString stringWithFormat:@"%@", _myModel.answer];
         NSLog(@"answer == %@", _myModel.answer);
         return ;
     }
-    _myView.showTextField.text = _getStr;
+    _myView.showTextView.text = _getStr;
 }
 
 @end

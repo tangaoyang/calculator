@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CalculatorView : UIView
 
-@property (nonatomic, strong) UITextField *showTextField;
+@property (nonatomic, strong) UITextView *showTextView;
 
 @property (nonatomic, strong) DeepButton *ACButton;
 @property (nonatomic, strong) DeepButton *leftButton;//左括号

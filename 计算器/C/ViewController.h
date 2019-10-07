@@ -15,6 +15,7 @@
 @property CalculatorView *myView;
 @property CalculatorModel *myModel;
 @property (nonatomic, strong) NSMutableString *getStr;
+@property int pointFlag;
 
 @end
 

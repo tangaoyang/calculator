@@ -150,7 +150,7 @@ float Count(float x1, char op, float x2) {
 - (void)Cal{
     
     char ch, x = '\0', op = '\0';
-    int i = 0;
+    int i = 0, k;
     float data, a1, a2, val;
     struct Sqstack *Num = (struct Sqstack*) malloc(sizeof(struct Sqstack)); //初始化操作数栈
     InitStack(Num);
@@ -162,6 +162,7 @@ float Count(float x1, char op, float x2) {
     while(ch != '#' || GetTop(Oper) != '#') {
         //opset为运算符集合
         if(!In(ch, opset)) {//如果读入的是操作数
+            k = 1;
             data = ch - '0';
             i++;
             ch = [_getCal characterAtIndex:i];
@@ -177,10 +178,9 @@ float Count(float x1, char op, float x2) {
                 }
                 if (flag) {
                     float j;
-                    j = (ch - '0') * pow(10, -1);
-                    NSLog(@"%f", j);
+                    j = (ch - '0') * pow(10, -k);
+                    k++;
                     data = data + j;
-                    NSLog(@"point data == %f", data);
                     flag++;
                 } else {
                     data = data * 10 + ch - '0';//读入操作数的各位数码，并转化为十进制数data
